@@ -1,77 +1,88 @@
-# Refund API (Node.js + Express + Prisma)
+# Refund API
 
-API para gerenciar sessões, usuários, reembolsos e **upload de imagens**.
+API em **Node.js + Express + TypeScript** para gerenciar usuários/sessões/reembolsos e realizar **upload de imagens**.
 
-> Repositório em TypeScript.
-
----
-
-## 🚀 Pré-requisitos
-
-- **Node.js** (recomendado 18+)
-- **npm**
-- **Prisma CLI** (instalado via dependências do projeto)
-- (Opcional) **Banco SQLite** (o projeto já vem com `prisma/dev.db`)
+- Upload: `POST /uploads`
+- Acesso aos arquivos: `GET /uploads/:filename`
 
 ---
 
-## 📦 Instalação
+## Stack
+
+- Node.js
+- Express
+- TypeScript
+- Prisma (ORM)
+- Multer (upload)
+
+---
+
+## Requisitos
+
+- Node.js (recomendado **18+**)
+- npm
+
+---
+
+## Como rodar
+
+### 1) Instalar dependências
 
 ```bash
 npm install
 ```
 
----
+### 2) (Opcional) Aplicar migrations do Prisma
 
-## 🗄️ Banco de dados (Prisma)
-
-Se precisar aplicar migrations (caso você altere o schema):
+Se você alterou o schema:
 
 ```bash
 npx prisma migrate dev
 ```
 
-Para rodar sem mudanças, normalmente não é necessário.
-
----
-
-## ▶️ Como rodar a API
-
-Em desenvolvimento (usa `ts-node`):
+### 3) Subir a API
 
 ```bash
 npm run dev
 ```
 
-Por padrão, o servidor sobe na porta:
+A API sobe na porta:
 
-- **http://localhost:3333**
+- `http://localhost:3333`
+
+> Se aparecer erro `EADDRINUSE`, tem outro processo usando a porta 3333. Pare o processo anterior e rode novamente.
 
 ---
 
-## 🧪 Testando upload (Insomnia / Postman)
+## Upload de imagem (Insomnia/Postman)
 
-### 1) Fazer upload (POST)
+### 1) Fazer upload
 
-Endpoint:
-
-- **POST** `/uploads`
+**POST** `/uploads`
 
 Body:
 
 - `multipart/form-data`
-- campo: `file` (nome **exato**)
+- campo **obrigatório**: `file` (nome exato)
 - tipo do campo: **File**
 
-> Observação: essa rota está protegida por middleware de autorização (no seu código, exige usuário com role `employee`).
+> Observação: esta rota está protegida por middleware de autorização e requer role `employee`.
 
-### 2) Acessar o arquivo (GET)
+### 2) Resposta
 
-Após o upload, o arquivo é salvo em:
+Quando dá certo, a API responde JSON com o `filename` salvo:
+
+```json
+{ "filename": "<nome-gerado>" }
+```
+
+### 3) Acessar a imagem
+
+Os arquivos finais ficam em:
 
 - `tmp/uploads/`
 
-Você pode servir o arquivo por:
+Para acessar:
 
 - **GET** `/uploads/:filename`
 
@@ -81,38 +92,30 @@ Exemplo:
 
 ---
 
-## 📁 Estrutura de pastas de upload
+## Endpoints principais
 
-- `tmp/` → pasta temporária
-- `tmp/uploads/` → arquivos já “finalizados”
-
----
-
-## 🛠️ Logs e erros
-
-Se o upload falhar, confira:
-
-- se a rota `/uploads` está com token/role corretos
-- se você está enviando `multipart/form-data` e o campo se chama **file**
-- se o servidor está na porta 3333 (evite `EADDRINUSE`)
+- `GET/POST /users` (conforme implementação)
+- `GET/POST /sessions` (conforme implementação)
+- `GET/POST /refunds` (conforme implementação)
+- `POST /uploads` (upload)
+- `GET /uploads/:filename` (arquivo estático)
 
 ---
 
-## 📌 Rotas principais
+## Scripts
 
-- `/users`
-- `/sessions`
-- `/refunds`
-- `/uploads` (upload + estáticos)
+- `npm run dev` — inicia a API em desenvolvimento (ts-node)
 
 ---
 
-## ✅ Scripts
+## Observações importantes
 
-- `npm run dev` → inicia a API em desenvolvimento
+- Pastas:
+  - `tmp/` (temporário)
+  - `tmp/uploads/` (final)
+- O servidor serve arquivos estáticos via `express.static` configurado em `/uploads`.
 
 ---
 
-## Licença
+Licença: MIT (ajuste se necessário)
 
-MIT (ou ajuste conforme seu projeto)
