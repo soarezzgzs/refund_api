@@ -117,5 +117,4 @@ Exemplo:
 
 ---
 
-Licença: MIT (ajuste se necessário)
-
+Licença: MIT
